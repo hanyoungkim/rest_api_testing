@@ -1032,9 +1032,10 @@
 							"    pm.response.to.have.status(200);\r",
 							"});\r",
 							"\r",
-							"pm.test(\"Environment Variable should be Undefined\", () => {\r",
+							"pm.test(\"Environment Variable should be Lucas\", () => {\r",
 							"    const envVariable = pm.variables.get(\"envTest\");\r",
 							"    pm.expect(envVariable).to.be.string(\"Lucas\");\r",
+							"    console.log(envVariable);\r",
 							"})"
 						],
 						"type": "text/javascript"
