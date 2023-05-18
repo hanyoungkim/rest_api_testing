@@ -58,7 +58,7 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(201);\r",
+							"    pm.response.to.have.status(200);\r",
 							"    console.log(\"TEST consol log 02\");\r",
 							"});\r",
 							"\r",
@@ -1034,7 +1034,7 @@
 							"\r",
 							"pm.test(\"Environment Variable should be Undefined\", () => {\r",
 							"    const envVariable = pm.variables.get(\"envTest\");\r",
-							"    pm.expect(envVariable).to.be.undefined;\r",
+							"    pm.expect(envVariable).to.be.string(\"Lucas\");\r",
 							"})"
 						],
 						"type": "text/javascript"
