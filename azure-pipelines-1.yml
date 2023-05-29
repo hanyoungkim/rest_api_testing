@@ -13,7 +13,7 @@ jobs:
     displayName: 'Install Node.js'
   - script: |
       echo Running Newman tests...
-      newman run "C:\agents\_work\2\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\2\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,htmlextra --reporter-htmlextra-export "C:\agents\_work\2\s\TrelloAPI\report.html" --verbose 2>&1
+      newman run "C:\agents\_work\2\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\2\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,htmlextra --reporter-htmlextra-export "C:\agents\_work\2\s\TrelloAPI\TestResults\result.xml" --verbose 2>&1
       echo Newman tests completed.
     displayName: 'Run Newman tests with HTMLExtra reporter'
   - task: PublishTestResults@2
