@@ -10,21 +10,22 @@ jobs:
   - task: NodeTool@0
     inputs:
       versionSpec: '14.x'  # Specify the desired Node.js version
+      checkLatest: true
     displayName: 'Install Node.js'
   - script: |
-      echo Installing newman...
-      npm install -g newman newman-reporter-htmlextra
+      echo Installing newman globally...
+      npm install -g newman
       echo Installing completed.
-  - task: Npm@1
-    inputs:
-      command: 'custom'
-      customCommand: 'install newman-reporter-junit'
-      workingDir: '$(System.DefaultWorkingDirectory)'
-    displayName: 'Install Newman JUnit Reporter'
+    displayName: 'Install Newman'
   - script: |
-      echo Running Newman tests...
-      newman run "C:\agents\_work\2\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\2\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,htmlextra,junit --reporter-junit-export "C:\agents\_work\2\s\TrelloAPI\report.xml" --verbose
-      echo Newman tests completed.
+      echo Installing newman-reporter-junit globally...
+      npm install -g newman-reporter-junit
+      echo Installing completed.
+    displayName: 'Install Newman JUnit Reporter'
+  - task: CmdLine@2
+    inputs:
+      script: 'newman run "C:\agents\_work\2\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\2\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,htmlextra,junit --reporter-junit-export "C:\agents\_work\2\s\TrelloAPI\report.xml" --verbose'
+    displayName: 'Run Newman tests'
   - task: PublishTestResults@2
     inputs:
       testResultsFormat: 'JUnit'
