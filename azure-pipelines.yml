@@ -1,0 +1,15 @@
+jobs:
+- job: RunPostmanTests
+  displayName: 'Run Postman Tests'
+  pool:
+    vmImage: 'vm01'  # Specify the VM image where you want to run the tests
+  steps:
+  - checkout: self
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '14.x'  # Specify the desired Node.js version
+    displayName: 'Install Node.js'
+  - script: |
+      npm install -g newman newman-reporter-htmlextra
+      newman run "/TrelloAPI/Trello API Tests.postman_collection.json" --environment "/TrelloAPI/UAT.postman_environment.json" --reporters cli,htmlextra --reporter-htmlextra-export "/TrelloAPI/Reports/report.html"
+    displayName: 'Run Newman tests with HTMLExtra reporter'
