@@ -12,6 +12,10 @@ jobs:
       versionSpec: '14.x'  # Specify the desired Node.js version
     displayName: 'Install Node.js'
   - script: |
+      echo Running NPM login...
+      npm login
+    displayName: 'NPM Login'
+  - script: |
       echo Installing newman globally...
       npm install -g newman
       echo Installing completed.
@@ -21,6 +25,10 @@ jobs:
       npm install -g newman-reporter-xml
       echo Installing completed.
     displayName: 'Install Newman XML Reporter'
+  - script: |
+      echo Running NPM logout...
+      npm logout
+    displayName: 'NPM Logout'
   - script: |
       echo Running Newman tests...
       newman run "C:\agents\_work\2\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\2\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,xml --reporter-xml-export "C:\agents\_work\2\s\TrelloAPI\TestResults\result.xml" --verbose 2>&1
