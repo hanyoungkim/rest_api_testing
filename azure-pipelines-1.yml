@@ -7,14 +7,12 @@ jobs:
     - Agent.Name -equals vm04
   steps:
   - checkout: self
-  - task: CmdLine@2
+  - task: NodeTool@0
     inputs:
-      script: 'newman run "C:\agents\_work\2\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\2\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,htmlextra --reporter-htmlextra-export "C:\agents\_work\2\s\TrelloAPI\report.html" --verbose'
-    displayName: 'Run Newman tests'
-  - task: PublishTestResults@2
-    inputs:
-      testResultsFormat: 'VSTest'
-      testResultsFiles: '/TrelloAPI/report.html'
-      failTaskOnFailedTests: true
-      searchFolder: '$(System.DefaultWorkingDirectory)'
-    condition: succeededOrFailed()
+      versionSpec: '14.x'  # Specify the desired Node.js version
+    displayName: 'Install Node.js'
+  - script: |
+      echo Running Newman tests...
+      newman run "C:\agents\_work\2\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\2\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,htmlextra --reporter-htmlextra-export "C:\agents\_work\2\s\TrelloAPI\report.html" --verbose 2>&1
+      echo Newman tests completed.
+    displayName: 'Run Newman tests with HTMLExtra reporter'
