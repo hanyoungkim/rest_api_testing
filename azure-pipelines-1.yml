@@ -13,15 +13,15 @@ jobs:
     displayName: 'Install Node.js'
   - script: |
       echo Installing newman...
-      npm install -g newman newman-reporter-htmlextra newman-reporter-junit
+      npm install -g newman newman-reporter-htmlextra newman-reporter-xml
       echo Installing completed.
       echo Running Newman tests...
-      newman run "C:\agents\_work\2\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\2\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,htmlextra,junit --reporter-junit-export "C:\agents\_work\2\s\TrelloAPI\report.xml" --verbose
+      newman run "C:\agents\_work\2\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\2\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,htmlextra,xml --reporter-xml-export "C:\agents\_work\2\s\TrelloAPI\report.xml" --verbose
       echo Newman tests completed.
-  - task: PublishTestResults@2
+  - task: PowerShell@2
     inputs:
-      testResultsFormat: 'JUnit'
-      testResultsFiles: '/TrelloAPI/report.xml'
-      failTaskOnFailedTests: true
-      searchFolder: '$(System.DefaultWorkingDirectory)'
-    condition: succeededOrFailed()
+      targetType: 'inline'
+      script: |
+        # Convert XML to JUnit format using XSLT transformation
+        $xsltPath = "$(Agent.WorkFolder)\xslt\newman-to-junit.xslt"
+        $xmlPath = "$(Agent.WorkFolder)\TrelloAPI\report.xml"
