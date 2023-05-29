@@ -13,5 +13,5 @@ jobs:
     displayName: 'Install Node.js'
   - script: |
       npm install -g newman newman-reporter-htmlextra
-          newman run /TrelloAPI/Trello API Tests.postman_collection.json --environment /TrelloAPI/UAT.postman_environment.json --reporters cli,htmlextra --reporter-htmlextra-export /TrelloAPI/Reports/report.html
+      newman run /TrelloAPI/Trello API Tests.postman_collection.json --environment /TrelloAPI/UAT.postman_environment.json --reporters cli,htmlextra --reporter-htmlextra-export /TrelloAPI/Reports/report.html --verbose
     displayName: 'Run Newman tests with HTMLExtra reporter'
