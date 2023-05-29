@@ -33,3 +33,4 @@ jobs:
       searchFolder: '$(System.DefaultWorkingDirectory)'
       failTaskOnFailedTests: true
       testRunTitle: 'Postman Tests'
+    condition: always()
