@@ -18,5 +18,5 @@ jobs:
     displayName: 'Run Newman tests with HTMLExtra reporter'
   - task: PublishBuildArtifacts@1
     inputs:
-      PathtoPublish: '$(System.DefaultWorkingDirectory)\TrelloAPI'
-      ArtifactName: 'TestResults'
+      PathtoPublish: 'C:\agents\_work\2\s\TrelloAPI\report.html'
+      ArtifactName: 'TestReport'
