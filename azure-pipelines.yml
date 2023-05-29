@@ -23,7 +23,7 @@ jobs:
     displayName: 'Install Newman xunit Reporter'
   - script: |
       echo Running Newman tests...
-      newman run "C:\agents\_work\2\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\2\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,xunit --reporter-xunit-export "C:\agents\_work\2\s\TrelloAPI\TestResults\result.xml" --verbose 2>&1
+      newman run "C:\agents\_work\1\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\1\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,xunit --reporter-xunit-export "C:\agents\_work\1\s\TrelloAPI\TestResults\result.xml" --verbose 2>&1
       echo Newman tests completed.
     displayName: 'Run Newman tests with xunit reporter'
   - task: PublishTestResults@2
