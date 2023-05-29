@@ -9,9 +9,7 @@ jobs:
   - checkout: self
   - task: CmdLine@2
     inputs:
-      script: '
-      newman --version
-      newman run "C:\agents\_work\2\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\2\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,htmlextra --reporter-htmlextra-export "C:\agents\_work\2\s\TrelloAPI\report.html" --verbose'
+      script: 'newman run "C:\agents\_work\2\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\2\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,htmlextra --reporter-htmlextra-export "C:\agents\_work\2\s\TrelloAPI\report.html" --verbose'
     displayName: 'Run Newman tests'
   - task: PublishTestResults@2
     inputs:
