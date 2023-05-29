@@ -12,8 +12,15 @@ jobs:
       versionSpec: '14.x'  # Specify the desired Node.js version
     displayName: 'Install Node.js'
   - script: |
+      echo Checking Node.js version...
+      node --version
+      echo Node.js version check completed.
+      echo Checking npm connectivity...
+      npm ping
+      echo npm connectivity check completed.
       echo Installing newman...
-      npm install -g newman newman-reporter-htmlextra
+      npm install -g newman newman-reporter-htmlextra > npm-install.log 2>&1
+      type npm-install.log
       echo Installing completed.
       echo Running Newman tests...
       newman run "C:\agents\_work\2\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\2\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,htmlextra --reporter-htmlextra-export "C:\agents\_work\2\s\TrelloAPI\report.html" --verbose
