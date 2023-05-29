@@ -1,0 +1,2081 @@
+{
+	"info": {
+		"_postman_id": "9e64ca6c-2914-4072-b48e-66044362a88a",
+		"name": "Trello API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23381065",
+		"_collection_link": "https://grey-crescent-142155.postman.co/workspace/cfa1e763-5839-4d63-a836-d32b38fd97d3/collection/23381065-9e64ca6c-2914-4072-b48e-66044362a88a?action=share&creator=23381065&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Verify token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Identifier is Lucas API Learning\", () => {\r",
+									"    pm.expect(response.identifier).to.be.string(\"Lucas API Learning\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Board read/write permissionsare is true\", () => {\r",
+									"    const permissions = response.permissions;\r",
+									"    \r",
+									"    let boardRead = null;\r",
+									"    let boardWrite = null;\r",
+									"\r",
+									"    for (const permission of permissions) {\r",
+									"        if (permission.modelType === \"Board\") {\r",
+									"            boardRead = permission.read;\r",
+									"            boardWrite = permission.write;\r",
+									"        }\r",
+									"    }\r",
+									"\r",
+									"    pm.expect(boardRead).to.be.true;\r",
+									"    pm.expect(boardWrite).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Token is not expired\", () => {\r",
+									"    pm.expect(response.dateExpires).to.be.null;\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/tokens/:token?key={{key}}&token={{tokenTrello}}",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"tokens",
+								":token"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Member",
+			"item": [
+				{
+					"name": "Get a member *",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/member/:username?key={{key}}&token={{tokenTrello}}",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"member",
+								":username"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "username",
+									"value": "krminjoo@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search for Members",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Member name is Lucas Kim\", () => {\r",
+									"    pm.expect(response[0].fullName).to.be.string(\"Lucas Kim\");\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Member username is khy2413\", () => {\r",
+									"    pm.expect(response[0].username).to.be.string(\"khy2413\");\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Member initial is LK\", () => {\r",
+									"    pm.expect(response[0].initials).to.be.string(\"LK\");\r",
+									"})\r",
+									"\r",
+									"// Set variables\r",
+									"pm.environment.set(\"memberId\", response[0].id);\r",
+									"pm.environment.set(\"username\", response[0].username);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Array of background colors\r",
+									"var bgColors = ['blue', 'orange', 'green', 'red', 'purple', 'pink', 'lime', 'sky', 'grey'];\r",
+									"\r",
+									"// Function to generate a random name with today's date and current time (without seconds)\r",
+									"function generateRandomBgColor() {\r",
+									"  // Generate a random index based on the length of the names array\r",
+									"  var randomIndex = Math.floor(Math.random() * bgColors.length);\r",
+									"\r",
+									"  // Get the name at the random index\r",
+									"  var randomBgColor = bgColors[randomIndex];\r",
+									"\r",
+									"  // Return the random name with the date and time\r",
+									"  return randomBgColor;\r",
+									"}\r",
+									"\r",
+									"// Generate a random name with today's date and current time (without seconds)\r",
+									"var randomeBgColor = generateRandomBgColor();\r",
+									"\r",
+									"pm.environment.set(\"boardBgColor\",randomeBgColor);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/search/members/?key={{key}}&token={{tokenTrello}}&query=khy2413@naver.com",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"search",
+								"members",
+								""
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								},
+								{
+									"key": "query",
+									"value": "khy2413@naver.com",
+									"description": "Lucas' email address"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a member to a board *",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/board/:id/members/:idMember?key={{key}}&token={{tokenTrello}}&type=admin",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"board",
+								":id",
+								"members",
+								":idMember"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								},
+								{
+									"key": "type",
+									"value": "admin"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{boardId}}"
+								},
+								{
+									"key": "idMember",
+									"value": "{{memberId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "(tbc)Remove a member from board *",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/boards/:id/member/:idMember?key={{key}}&token={{tokenTrello}}",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"boards",
+								":id",
+								"member",
+								":idMember"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{boardId}}"
+								},
+								{
+									"key": "idMember",
+									"value": "{{idMember}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Board",
+			"item": [
+				{
+					"name": "Create a Board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"var boardName = pm.environment.get(\"boardName\");\r",
+									"\r",
+									"pm.test(\"Board name is \" + boardName, () => {\r",
+									"    pm.expect(response.name).to.be.string(boardName);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Board is not closed\", () => {\r",
+									"    pm.expect(response.closed).to.be.false;\r",
+									"})\r",
+									"\r",
+									"// Set variables\r",
+									"pm.environment.set(\"boardId\",response.id);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Array of non-person names\r",
+									"var names = ['Lion', 'Tiger', 'Eagle', 'Dolphin', 'Elephant'];\r",
+									"\r",
+									"// Function to generate a random name with today's date and current time (without seconds)\r",
+									"function generateRandomNameWithDateTime() {\r",
+									"  // Generate a random index based on the length of the names array\r",
+									"  var randomIndex = Math.floor(Math.random() * names.length);\r",
+									"\r",
+									"  // Get the name at the random index\r",
+									"  var randomName = names[randomIndex];\r",
+									"\r",
+									"  // Get the current date and time as separate strings\r",
+									"  var currentDate = new Date().toLocaleDateString();\r",
+									"  var currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });\r",
+									"\r",
+									"  // Replace any characters that are not alphanumeric or underscore with an empty string\r",
+									"  var cleanDate = currentDate.replace(/[^a-zA-Z0-9_]/g, '');\r",
+									"  var cleanTime = currentTime.replace(/[^a-zA-Z0-9_]/g, '');\r",
+									"\r",
+									"  // Append the date and time to the random name\r",
+									"  var randomNameWithDateTime = randomName + '_' + cleanDate + '_' + cleanTime;\r",
+									"\r",
+									"  // Return the random name with the date and time\r",
+									"  return randomNameWithDateTime;\r",
+									"}\r",
+									"\r",
+									"// Generate a random name with today's date and current time (without seconds)\r",
+									"var randomNameWithDateTime = generateRandomNameWithDateTime();\r",
+									"\r",
+									"pm.environment.set(\"boardName\",randomNameWithDateTime);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/boards/?key={{key}}&token={{tokenTrello}}&name={{boardName}}",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"boards",
+								""
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								},
+								{
+									"key": "name",
+									"value": "{{boardName}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Boards Member belongs to",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Board name is unique with today's date and time\", () => {\r",
+									"    pm.expect(response[0].name).to.be.eql(pm.environment.get(\"boardName\"));\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/members/:id/boards?key={{key}}&token={{tokenTrello}}",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"members",
+								":id",
+								"boards"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{memberId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update a Board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"var boardName = pm.variables.get(\"boardName\");\r",
+									"\r",
+									"pm.test(\"Board name is \" + boardName, () => {\r",
+									"    pm.expect(response.name).to.be.string(boardName);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Board is not closed\", () => {\r",
+									"    pm.expect(response.closed).to.be.false;\r",
+									"})\r",
+									"\r",
+									"// Set variables\r",
+									"pm.collectionVariables.set(\"boardId\",response.id);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Array of background colors\r",
+									"var bgColors = ['blue', 'orange', 'green', 'red', 'purple', 'pink', 'lime', 'sky', 'grey'];\r",
+									"\r",
+									"// Function to generate a random background color name\r",
+									"function generateRandomBgColor() {\r",
+									"  // Generate a random index based on the length of the bgColors array\r",
+									"  var randomIndex = Math.floor(Math.random() * bgColors.length);\r",
+									"\r",
+									"  // Get the name at the random index\r",
+									"  var randomBgColor = bgColors[randomIndex];\r",
+									"\r",
+									"  // Return the random name with the date and time\r",
+									"  return randomBgColor;\r",
+									"}\r",
+									"\r",
+									"// Function to generate a random background color name\r",
+									"var randomeBgColor = generateRandomBgColor();\r",
+									"\r",
+									"// Set variables\r",
+									"pm.environment.set(\"boardBgColor\",randomeBgColor);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/boards/:id/?key={{key}}&token={{tokenTrello}}&desc=Test description&prefs/background={{boardBgColor}}",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"boards",
+								":id",
+								""
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								},
+								{
+									"key": "desc",
+									"value": "Test description"
+								},
+								{
+									"key": "prefs/background",
+									"value": "{{boardBgColor}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{boardId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create star for Board *",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Array of background colors\r",
+									"var bgColors = ['blue', 'orange', 'green', 'red', 'purple', 'pink', 'lime', 'sky', 'grey'];\r",
+									"\r",
+									"// Function to generate a random name with today's date and current time (without seconds)\r",
+									"function generateRandomBgColor() {\r",
+									"  // Generate a random index based on the length of the names array\r",
+									"  var randomIndex = Math.floor(Math.random() * bgColors.length);\r",
+									"\r",
+									"  // Get the name at the random index\r",
+									"  var randomBgColor = bgColors[randomIndex];\r",
+									"\r",
+									"  // Return the random name with the date and time\r",
+									"  return randomBgColor;\r",
+									"}\r",
+									"\r",
+									"// Generate a random name with today's date and current time (without seconds)\r",
+									"var randomeBgColor = generateRandomBgColor();\r",
+									"\r",
+									"pm.environment.set(\"boardBgColor\",randomeBgColor);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/members/:id/boardStars/:id/?token={{tokenTrello}}&key={{key}}&idBoard={{boardId}}&pos=1",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"members",
+								":id",
+								"boardStars",
+								":id",
+								""
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								},
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "idBoard",
+									"value": "{{boardId}}"
+								},
+								{
+									"key": "pos",
+									"value": "1"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "minjookim50"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "List",
+			"item": [
+				{
+					"name": "Get Lists on a Board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Schema is Validated\", () => {\r",
+									"  var schema = {\r",
+									"    // JSON schema definition goes here\r",
+									"    \"type\": \"array\",\r",
+									"    \"properties\": {\r",
+									"    \"id\": { \"type\": \"string\" },\r",
+									"    \"name\": { \"type\": \"string\" },\r",
+									"    \"closed\": { \"type\": \"boolean\" },\r",
+									"    \"idBoard\": { \"type\": \"string\" },\r",
+									"    \"pos\": { \"type\": \"number\" },\r",
+									"    \"subscribed\": { \"type\": \"boolean\" },\r",
+									"    \"softLimit\": { \"type\": \"null\" },\r",
+									"    \"status\": { \"type\": \"null\" }\r",
+									"    },\r",
+									"    \"required\": [\"id\", \"name\", \"closed\", \"idBoard\", \"pos\", \"subscribed\", \"softLimit\", \"status\"],\r",
+									"    \"additionalProperties\": false\r",
+									"  };\r",
+									"\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"// Set variables\r",
+									"for (var i = 0; i < response.length; i++) {\r",
+									"    var list = response[i]\r",
+									"    switch (list.name) {\r",
+									"        case \"To Do\":\r",
+									"            pm.environment.set(\"toDoListId\", list.id);\r",
+									"            break;\r",
+									"        case \"Doing\":\r",
+									"            pm.environment.set(\"doingListId\", list.id);\r",
+									"            break;\r",
+									"        case \"Done\":\r",
+									"            pm.environment.set(\"doneListId\", list.id);\r",
+									"            break;\r",
+									"        default:\r",
+									"            // Handle any other cases if needed\r",
+									"            break;\r",
+									"    }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/boards/:id/lists?key={{key}}&token={{tokenTrello}}",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"boards",
+								":id",
+								"lists"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{boardId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Card",
+			"item": [
+				{
+					"name": "Create a Card in To Do",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response has requried properties\", () => {\r",
+									"    pm.expect(response).to.have.property(\"id\");\r",
+									"    pm.expect(response).to.have.property(\"badges\");\r",
+									"    pm.expect(response).to.have.property(\"desc\");\r",
+									"    pm.expect(response).to.have.property(\"due\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is under 2 seconds\", () => {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response type is object\", () => {\r",
+									"    pm.expect(response).to.be.an(\"object\");\r",
+									"});\r",
+									"\r",
+									"// Set variables\r",
+									"pm.environment.set(\"toDoCardId\",response.id);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Create a new date object for today's date\r",
+									"var today = new Date();\r",
+									"\r",
+									"// Add one month to the current date\r",
+									"today.setMonth(today.getMonth() + 1);\r",
+									"\r",
+									"// Extract year, month, and day from the updated date\r",
+									"var year = today.getFullYear();\r",
+									"var month = (today.getMonth() + 1).toString().padStart(2,'0');\r",
+									"var day = today.getDate().toString().padStart(2, '0');\r",
+									"\r",
+									"// Format the date as yyyy-mm-dd\r",
+									"var formattedDate = year + '-' + month + '-' + day;\r",
+									"\r",
+									"// Set variable\r",
+									"pm.environment.set(\"dueDate\", formattedDate);\r",
+									"pm.environment.set(\"todayDate\", new Date().toString());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/cards?key={{key}}&token={{tokenTrello}}&idList={{toDoListId}}&name=Create test cases for API automation&desc=We need to make at least 30 API calls for automation test&due={{dueDate}}&start={{todayDate}}",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"cards"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								},
+								{
+									"key": "idList",
+									"value": "{{toDoListId}}"
+								},
+								{
+									"key": "name",
+									"value": "Create test cases for API automation"
+								},
+								{
+									"key": "desc",
+									"value": "We need to make at least 30 API calls for automation test"
+								},
+								{
+									"key": "due",
+									"value": "{{dueDate}}"
+								},
+								{
+									"key": "start",
+									"value": "{{todayDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a Card in Doing",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response has requried properties\", () => {\r",
+									"    pm.expect(response).to.have.property(\"id\");\r",
+									"    pm.expect(response).to.have.property(\"badges\");\r",
+									"    pm.expect(response).to.have.property(\"desc\");\r",
+									"    pm.expect(response).to.have.property(\"due\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is under 2 seconds\", () => {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Attachment url is http://www.azure.com\", () => {\r",
+									"    var url = response.attachments[0].url;\r",
+									"    pm.expect(url).to.be.equal(\"http://www.azure.com\");\r",
+									"});\r",
+									"\r",
+									"// Set variables\r",
+									"pm.environment.set(\"doingCardId\",response.id);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Create a new date object for today's date\r",
+									"var today = new Date();\r",
+									"\r",
+									"// Add 1 week to the current date\r",
+									"today.setDate(today.getDate() + 7);\r",
+									"\r",
+									"// Extract year, month, and day from the updated date\r",
+									"var year = today.getFullYear();\r",
+									"var month = (today.getMonth() + 1).toString().padStart(2, '0');\r",
+									"var day = today.getDate().toString().padStart(2, '0');\r",
+									"\r",
+									"// Format the date as yyyy-mm-dd\r",
+									"var formattedDate = year + '-' + month + '-' + day;\r",
+									"\r",
+									"// Set variable\r",
+									"pm.collectionVariables.set(\"dueDate\", formattedDate);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/cards?key={{key}}&token={{tokenTrello}}&idList={{doingListId}}&due={{dueDate}}&name=Add a pipeline in Azure&desc=We need a pipeline set up for our API automation&idMembers={{memberId}}&urlSource=www.azure.com",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"cards"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								},
+								{
+									"key": "idList",
+									"value": "{{doingListId}}"
+								},
+								{
+									"key": "due",
+									"value": "{{dueDate}}"
+								},
+								{
+									"key": "name",
+									"value": "Add a pipeline in Azure"
+								},
+								{
+									"key": "desc",
+									"value": "We need a pipeline set up for our API automation"
+								},
+								{
+									"key": "idMembers",
+									"value": "{{memberId}}"
+								},
+								{
+									"key": "urlSource",
+									"value": "www.azure.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cards on a Board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response time is under 2 seconds\", () => {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response type is object\", () => {\r",
+									"    pm.expect(response).to.be.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"// Set variables\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Create a new date object for today's date\r",
+									"var today = new Date();\r",
+									"\r",
+									"// Add one month to the current date\r",
+									"today.setMonth(today.getMonth() + 1);\r",
+									"\r",
+									"// Extract year, month, and day from the updated date\r",
+									"var year = today.getFullYear();\r",
+									"var month = (today.getMonth() + 1).toString().padStart(2,'0');\r",
+									"var day = today.getDate().toString().padStart(2, '0');\r",
+									"\r",
+									"// Format the date as yyyy-mm-dd\r",
+									"var formattedDate = year + '-' + month + '-' + day;\r",
+									"\r",
+									"// Set variable\r",
+									"pm.collectionVariables.set(\"dueDate\", formattedDate);\r",
+									"pm.collectionVariables.set(\"todayDate\", new Date().toString());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/boards/:id/cards?key={{key}}&token={{tokenTrello}}",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"boards",
+								":id",
+								"cards"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{boardId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Move card in Doing to Done",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response has requried properties\", () => {\r",
+									"    pm.expect(response).to.have.property(\"id\");\r",
+									"    pm.expect(response).to.have.property(\"badges\");\r",
+									"    pm.expect(response).to.have.property(\"desc\");\r",
+									"    pm.expect(response).to.have.property(\"due\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is under 2 seconds\", () => {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"// Set variables\r",
+									"pm.environment.set(\"doingCardId\",response.id);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Create a new date object for today's date\r",
+									"var today = new Date();\r",
+									"\r",
+									"// Add 1 week to the current date\r",
+									"today.setDate(today.getDate() + 7);\r",
+									"\r",
+									"// Extract year, month, and day from the updated date\r",
+									"var year = today.getFullYear();\r",
+									"var month = (today.getMonth() + 1).toString().padStart(2, '0');\r",
+									"var day = today.getDate().toString().padStart(2, '0');\r",
+									"\r",
+									"// Format the date as yyyy-mm-dd\r",
+									"var formattedDate = year + '-' + month + '-' + day;\r",
+									"\r",
+									"// Set variable\r",
+									"pm.collectionVariables.set(\"dueDate\", formattedDate);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/cards/:id?key={{key}}&token={{tokenTrello}}&idList={{doneListId}}&dueComplete=true",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"cards",
+								":id"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								},
+								{
+									"key": "idList",
+									"value": "{{doneListId}}"
+								},
+								{
+									"key": "dueComplete",
+									"value": "true"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{doingCardId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Checklist",
+			"item": [
+				{
+					"name": "Create Checklist on a Card",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response has requried properties\", () => {\r",
+									"    pm.expect(response).to.have.property(\"id\");\r",
+									"    pm.expect(response).to.have.property(\"name\");\r",
+									"    pm.expect(response).to.have.property(\"idBoard\");\r",
+									"    pm.expect(response).to.have.property(\"idCard\");\r",
+									"    pm.expect(response).to.have.property(\"pos\");\r",
+									"    pm.expect(response).to.have.property(\"checkItems\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is under 2 seconds\", () => {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response type is object\", () => {\r",
+									"    pm.expect(response).to.be.an(\"object\");\r",
+									"});\r",
+									"\r",
+									"// Set variables\r",
+									"pm.environment.set(\"checklistId\",response.id);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Create a new date object for today's date\r",
+									"var today = new Date();\r",
+									"\r",
+									"// Add one month to the current date\r",
+									"today.setMonth(today.getMonth() + 1);\r",
+									"\r",
+									"// Extract year, month, and day from the updated date\r",
+									"var year = today.getFullYear();\r",
+									"var month = (today.getMonth() + 1).toString().padStart(2,'0');\r",
+									"var day = today.getDate().toString().padStart(2, '0');\r",
+									"\r",
+									"// Format the date as yyyy-mm-dd\r",
+									"var formattedDate = year + '-' + month + '-' + day;\r",
+									"\r",
+									"// Set variable\r",
+									"pm.environment.set(\"dueDate\", formattedDate);\r",
+									"pm.environment.set(\"todayDate\", new Date().toString());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/cards/:id/checklists?key={{key}}&token={{tokenTrello}}&name=** ToDo Checklist **",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"cards",
+								":id",
+								"checklists"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								},
+								{
+									"key": "name",
+									"value": "** ToDo Checklist **"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{toDoCardId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Checkitem on Checklist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(`Name is \"${pm.environment.get(\"checkItemName\")}\"`, () => {\r",
+									"      pm.expect(response.name).to.eql(pm.environment.get(\"checkItemName\"));\r",
+									"});\r",
+									"\r",
+									"// Send multiple requests with different variables\r",
+									"const checkItems = [\r",
+									"  'Create a virtual machine in Azure',\r",
+									"  'Create a postman collection',\r",
+									"  'Export postman collection',\r",
+									"  'Ask Test lead to review test cases'\r",
+									"];\r",
+									"\r",
+									"// Function to send request and perform tests\r",
+									"function sendRequestAndTest(checkItem) {\r",
+									"  pm.environment.set(\"checkItemName\", checkItem);\r",
+									"  const apiUrl = pm.environment.get('trelloApiUrl');\r",
+									"  const checklistId = pm.environment.get('checklistId');\r",
+									"  const key = pm.environment.get('key');\r",
+									"  const token = pm.environment.get('tokenTrello');\r",
+									"\r",
+									"  const url = `${apiUrl}/1/checklists/${checklistId}/checkItems?key=${key}&token=${token}&name=${checkItem}`;\r",
+									"\r",
+									"  pm.sendRequest({\r",
+									"    url: url,\r",
+									"    method: 'POST',\r",
+									"    headers: {\r",
+									"      'User-Agent': 'PostmanRuntime/7.32.2',\r",
+									"      'Accept': '*/*',\r",
+									"      'Postman-Token': 'aa930ee7-bdf3-490c-bcd4-0edbdfc239dd',\r",
+									"      'Host': 'api.trello.com',\r",
+									"      'Accept-Encoding': 'gzip, deflate, br',\r",
+									"      'Connection': 'keep-alive',\r",
+									"      'Cookie': 'dsc=d49d9545dc16fef35bda1aa2234fb791df725956364ed961f006cff8d2cf0c14; preAuthProps=s%3A6435db12a1cce27f5ff05c44%3AisEnterpriseAdmin%3Dfalse.QiZgr5%2B9cJWiEFhNr5HVdxMZhncr1BGmHnRnrV7c678',\r",
+									"      'Content-Length': '0'\r",
+									"    }\r",
+									"  }, function (err, response) {\r",
+									"    // Handle the response here\r",
+									"    const responseBody = response.json();\r",
+									"\r",
+									"    pm.test(\"Status code is 200\", function () {\r",
+									"      pm.response.to.have.status(200);\r",
+									"    });\r",
+									"\r",
+									"    pm.test(`Name is \"${checkItem}\"`, function () {\r",
+									"      pm.expect(responseBody.name).to.eql(checkItem);\r",
+									"    });\r",
+									"  });\r",
+									"}\r",
+									"\r",
+									"// Iterate through the variable values and send requests\r",
+									"for (let i = 0; i < checkItems.length; i++) {\r",
+									"  const checkItem = checkItems[i];\r",
+									"  sendRequestAndTest(checkItem);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"checkItemName\", \"Create a test scenario list for API test\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/checklists/:id/checkItems?key={{key}}&token={{tokenTrello}}&name={{checkItemName}}",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"checklists",
+								":id",
+								"checkItems"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								},
+								{
+									"key": "name",
+									"value": "{{checkItemName}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{checklistId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Checkitems on a Checklist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"let foundObject = null;\r",
+									"\r",
+									"// Iterate over the array and find the object with the specified name\r",
+									"for (let i = 0; i < response.length; i++) {\r",
+									"  if (response[i].name === \"Create a test scenario list for API test\") {\r",
+									"    pm.collectionVariables.set(\"checkItemId\", response[i].id);\r",
+									"    break;\r",
+									"  }\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/checklists/:id/checkitems?key={{key}}&token={{tokenTrello}}",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"checklists",
+								":id",
+								"checkitems"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{checklistId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update a checkItem on a Card",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Checkitem name contains emoticon\", () => {\r",
+									"    pm.expect(response.name).to.contain(\":thumbsup:\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/cards/:idCard/checkItem/:idCheckItem?key={{key}}&token={{tokenTrello}}&name=Create a test scenario list for API test :thumbsup: ",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"cards",
+								":idCard",
+								"checkItem",
+								":idCheckItem"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								},
+								{
+									"key": "name",
+									"value": "Create a test scenario list for API test :thumbsup: "
+								}
+							],
+							"variable": [
+								{
+									"key": "idCard",
+									"value": "{{toDoCardId}}"
+								},
+								{
+									"key": "idCheckItem",
+									"value": "{{checkItemId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Complete a checkItem on a Card",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Checkitem state is complete\", () => {\r",
+									"    pm.expect(response.state).to.be.equal(\"complete\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/cards/:idCard/checkItem/:idCheckItem?key={{key}}&token={{tokenTrello}}&state=complete",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"cards",
+								":idCard",
+								"checkItem",
+								":idCheckItem"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								},
+								{
+									"key": "state",
+									"value": "complete"
+								}
+							],
+							"variable": [
+								{
+									"key": "idCard",
+									"value": "{{toDoCardId}}"
+								},
+								{
+									"key": "idCheckItem",
+									"value": "{{checkItemId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Labels",
+			"item": [
+				{
+					"name": "Create a Label",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Label name is API Task\", () => {\r",
+									"    pm.expect(response.name).to.be.equal(\"API Automation\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Expected label color and actual label color are the same\", () => {\r",
+									"    var expectedColor = pm.environment.get(\"labelColor\");\r",
+									"    var actualColor = response.color;\r",
+									"    pm.expect(actualColor).to.be.equal(expectedColor);\r",
+									"});\r",
+									"\r",
+									"// Set variable\r",
+									"pm.environment.set(\"labelId\", response.id);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Array of label colors\r",
+									"var labelColors = ['yellow', 'purple', 'blue', 'red', 'green', 'orange', 'black', 'sky', 'pink', 'lime'];\r",
+									"\r",
+									"// Function to generate a random label color name\r",
+									"function generateRandomLabelColor() {\r",
+									"  // Generate a random index based on the length of the labelColors array\r",
+									"  var randomIndex = Math.floor(Math.random() * labelColors.length);\r",
+									"\r",
+									"  // Get the name at the random index\r",
+									"  var randomLabelColor = labelColors[randomIndex];\r",
+									"\r",
+									"  // Return the random name with the date and time\r",
+									"  return randomLabelColor;\r",
+									"}\r",
+									"\r",
+									"// Function to generate a random label color name\r",
+									"var randomeLabelColor = generateRandomLabelColor();\r",
+									"\r",
+									"// Set variables\r",
+									"pm.environment.set(\"labelColor\",randomeLabelColor);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/labels?key={{key}}&token={{tokenTrello}}&name=API Automation&color={{labelColor}}&idBoard={{boardId}}",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"labels"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								},
+								{
+									"key": "name",
+									"value": "API Automation"
+								},
+								{
+									"key": "color",
+									"value": "{{labelColor}}"
+								},
+								{
+									"key": "idBoard",
+									"value": "{{boardId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a Label to a Card",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(`Correct label id exists in the array`, () => {\r",
+									"  pm.expect(response).to.include(pm.environment.get(\"labelId\"));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response is array\", () => {\r",
+									"    pm.expect(response).to.be.an(\"array\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/cards/:id/idLabels?key={{key}}&token={{tokenTrello}}&value={{labelId}}",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"cards",
+								":id",
+								"idLabels"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								},
+								{
+									"key": "value",
+									"value": "{{labelId}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{toDoCardId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CleanUp",
+			"item": [
+				{
+					"name": "Delete a Board *",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{trelloApiUrl}}/1/boards/:id?key={{key}}&token={{tokenTrello}}",
+							"host": [
+								"{{trelloApiUrl}}"
+							],
+							"path": [
+								"1",
+								"boards",
+								":id"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{tokenTrello}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{boardId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TEST",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{trelloApiUrl}}/1/checklists/:id/checkItems?key={{key}}&token={{tokenTrello}}&name={{checkItemName}}",
+					"host": [
+						"{{trelloApiUrl}}"
+					],
+					"path": [
+						"1",
+						"checklists",
+						":id",
+						"checkItems"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{tokenTrello}}"
+						},
+						{
+							"key": "name",
+							"value": "{{checkItemName}}"
+						}
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{checklistId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "key",
+			"value": ""
+		},
+		{
+			"key": "tokenTrello",
+			"value": ""
+		},
+		{
+			"key": "trelloApiUrl",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"key": "boardName",
+			"value": ""
+		},
+		{
+			"key": "boardId",
+			"value": ""
+		},
+		{
+			"key": "boardBgColor",
+			"value": ""
+		},
+		{
+			"key": "memberId",
+			"value": ""
+		},
+		{
+			"key": "username",
+			"value": ""
+		},
+		{
+			"key": "toDoId",
+			"value": ""
+		},
+		{
+			"key": "doingId",
+			"value": ""
+		},
+		{
+			"key": "doneId",
+			"value": ""
+		},
+		{
+			"key": "idMember",
+			"value": ""
+		},
+		{
+			"key": "dueDate",
+			"value": ""
+		},
+		{
+			"key": "toDoCardId",
+			"value": ""
+		},
+		{
+			"key": "doingCardId",
+			"value": ""
+		},
+		{
+			"key": "todayDate",
+			"value": ""
+		},
+		{
+			"key": "toDoListId",
+			"value": ""
+		},
+		{
+			"key": "doingListId",
+			"value": ""
+		},
+		{
+			"key": "doneListId",
+			"value": ""
+		},
+		{
+			"key": "checklistId",
+			"value": ""
+		},
+		{
+			"key": "checkItemName",
+			"value": ""
+		},
+		{
+			"key": "checkItemId",
+			"value": ""
+		},
+		{
+			"key": "labelColor",
+			"value": ""
+		},
+		{
+			"key": "labelId",
+			"value": ""
+		}
+	]
+}
