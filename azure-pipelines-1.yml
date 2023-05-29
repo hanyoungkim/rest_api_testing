@@ -12,6 +12,16 @@ jobs:
       versionSpec: '14.x'  # Specify the desired Node.js version
     displayName: 'Install Node.js'
   - script: |
+      echo Installing newman...
+      npm install -g newman newman-reporter-htmlextra
+      echo Installing completed.
+  - task: Npm@1
+    inputs:
+      command: 'custom'
+      customCommand: 'install newman-reporter-junit'
+      workingDir: '$(System.DefaultWorkingDirectory)'
+    displayName: 'Install Newman JUnit Reporter'
+  - script: |
       echo Running Newman tests...
       newman run "C:\agents\_work\2\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\2\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,htmlextra,junit --reporter-junit-export "C:\agents\_work\2\s\TrelloAPI\report.xml" --verbose
       echo Newman tests completed.
