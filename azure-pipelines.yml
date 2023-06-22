@@ -21,10 +21,14 @@ jobs:
   - script: |
       echo Installing newman-reporter-xunit globally...
       npm install -g newman-reporter-xunit
+      echo Installing completed.
+    displayName: 'Install Newman xunit Reporter'
+    
+    - script: |
       echo Installing newman-reporter-htmlextra globally...
       npm install -g newman-reporter-htmlextra
       echo Installing completed.
-    displayName: 'Install Newman xunit and htmlextra Reporter'
+    displayName: 'Install Newman htmlextra Reporter'
   
   - script: |
       echo Running Newman tests...
@@ -40,3 +44,9 @@ jobs:
       failTaskOnFailedTests: true
       testRunTitle: 'Postman Tests'
     condition: always()
+    
+  - task: UploadPostmanHtmlReport@1
+    displayName: Publish Postman Html Reports
+    inputs:
+      cwd: C:\agents\_work\1\s\TrelloAPI\TestResults
+      tabName: Postman Tests
