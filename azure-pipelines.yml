@@ -11,21 +11,25 @@ jobs:
     inputs:
       versionSpec: '14.x'  # Specify the desired Node.js version
     displayName: 'Install Node.js'
+  
   - script: |
       echo Installing newman globally...
       npm install -g newman
       echo Installing completed.
     displayName: 'Install Newman'
+  
   - script: |
       echo Installing newman-reporter-xunit globally...
       npm install -g newman-reporter-xunit
       echo Installing completed.
     displayName: 'Install Newman xunit Reporter'
+  
   - script: |
       echo Running Newman tests...
       newman run "C:\agents\_work\1\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\1\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,xunit --reporter-xunit-export "C:\agents\_work\1\s\TrelloAPI\TestResults\result.xml" --verbose 2>&1
       echo Newman tests completed.
     displayName: 'Run Newman tests with xunit reporter'
+  
   - task: PublishTestResults@2
     inputs:
       testResultsFormat: 'JUnit'
