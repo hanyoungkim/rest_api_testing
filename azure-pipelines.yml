@@ -32,7 +32,7 @@ jobs:
   
   - script: |
       echo Running Newman tests...
-      newman run "C:\agents\_work\1\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\1\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,xunit,htmlextra --reporter-xunit-export "C:\agents\_work\1\s\TrelloAPI\TestResults\result.xml" --verbose 2>&1
+      newman run "C:\agents\_work\1\s\TrelloAPI\Trello_API_Tests.postman_collection.json" --environment "C:\agents\_work\1\s\TrelloAPI\UAT.postman_environment.json" --reporters cli,xunit,htmlextra --reporter-xunit-export "C:\agents\_work\1\s\TrelloAPI\TestResults\result.xml" --reporter-htmlextra-export "C:\agents\_work\1\s\TrelloAPI\TestResults\result.html" --verbose 2>&1
       echo Newman tests completed.
     displayName: 'Run Newman tests with xunit reporter'
   
@@ -45,8 +45,8 @@ jobs:
       testRunTitle: 'Postman Tests'
     condition: always()
     
-  # - task: UploadPostmanHtmlReport@1
-    # displayName: Publish Postman Html Reports
-    # inputs:
-      # cwd: C:\agents\_work\1\s\TrelloAPI\TestResults
-      # tabName: Postman Tests
+  - task: UploadPostmanHtmlReport@1
+    displayName: Publish Postman Html Reports
+    inputs:
+      cwd: C:\agents\_work\1\s\TrelloAPI\TestResults
+      tabName: Postman Tests
