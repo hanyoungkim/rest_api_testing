@@ -45,8 +45,8 @@ jobs:
       testRunTitle: 'Postman Tests'
     condition: always()
     
-  - task: UploadPostmanHtmlReport@1
-    displayName: Publish Postman Html Reports
-    inputs:
-      cwd: C:\agents\_work\1\s\TrelloAPI\TestResults
-      tabName: Postman Tests
+  # - task: UploadPostmanHtmlReport@1
+    # displayName: Publish Postman Html Reports
+    # inputs:
+      # cwd: C:\agents\_work\1\s\TrelloAPI\TestResults
+      # tabName: Postman Tests
