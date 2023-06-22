@@ -24,7 +24,7 @@ jobs:
       echo Installing completed.
     displayName: 'Install Newman xunit Reporter'
     
-    - script: |
+  - script: |
       echo Installing newman-reporter-htmlextra globally...
       npm install -g newman-reporter-htmlextra
       echo Installing completed.
